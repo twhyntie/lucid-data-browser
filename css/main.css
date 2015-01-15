@@ -89,6 +89,26 @@
 	margin: 10px;
 }
 
+#tracking-button {
+	position: absolute;
+	left: 120px;
+	bottom: 220px;
+	width: 140px;
+	height: 40px;
+	border: 1px solid #333333;
+	border-radius: 5px;
+	color: #333333;
+	text-align: center;
+	line-height: 40px;
+	font-family: open-sans;
+	background: #f2f2f2;
+	cursor: pointer;
+}
+
+#tracking-button:hover {
+	background-color: #dddddd;
+}
+
 #data {
 	position: fixed;
 	top: 50%;

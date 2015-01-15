@@ -4,12 +4,14 @@ import tds1_telemetry as tel
 import os
 import Image
 
-datafile = LucidFile("data/data.ldat")
-rootfolder = "data/"
+datafile = LucidFile("../ldat/" + raw_input("Enter data filename: "))
+rootfolder = "../data/" + raw_input("Enter web name: ") + "/"
+num_frames = int(raw_input("Enter number of frames(" + str(datafile.num_frames - 1) + "): "))
 
-meta = ""
+meta = str(num_frames) + " none\n"
 
-for i in range(20):
+for i in range(num_frames):
+	print "processing frame", str(i + 1)
 	os.makedirs(rootfolder + "frame" + str(i + 1))
 
 	framefolder = rootfolder + "frame" + str(i + 1) + "/"
@@ -29,3 +31,4 @@ for i in range(20):
 f = open(rootfolder + "metadata", "w")
 f.write(meta[:-1]) # trim off ending newline
 f.close()
+print "done"

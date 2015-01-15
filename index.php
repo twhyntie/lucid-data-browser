@@ -1,8 +1,11 @@
 <?php
 
+//error_reporting(E_ALL);
+//ini_set('display_errors', 1);
+
 $id = $_GET['id'];
 if (!isset($id)) {
-	$id = "2014-12-20";
+	$id = "2014-12-20"; //default file
 }
 
 $files = preg_grep('/^([^.])/',scandir("data"));
@@ -11,8 +14,11 @@ if (!in_array($id, $files)) {
 	die(file_get_contents("404.html"));
 }
 
-$metadata = file_get_contents("data/2014-12-20/metadata");
-
+$metadata = file_get_contents("data/{$id}/metadata");
+$metadata = explode("\n", $metadata);
+$num_frames = $metadata[0];
+$num_frames = explode(" ", $num_frames);
+$num_frames = $num_frames[0];
 
 ?>
 <!DOCTYPE html>
@@ -35,7 +41,7 @@ $metadata = file_get_contents("data/2014-12-20/metadata");
 			Latitude: <span id = "lat"></span>&deg;<br>
 			Longitude: <span id = "lng"></span>&deg;
 		</div>
-
+		<div id = "tracking-button" onclick = "window.location = 'tracking.php';">Track LUCID</div>
 		<div id = "map">
 			<img id = "lucid-icon" src = "img/lucid.jpg">
 		</div>
@@ -48,7 +54,7 @@ $metadata = file_get_contents("data/2014-12-20/metadata");
 		<div class = "label">TPX1</div>
 		<div class = "label">TPX3</div>
 	</div>
-	<div id = "frame-indicator">Frame <span id = "current-frame"></span> of 20</div>
+	<div id = "frame-indicator">Frame <span id = "current-frame"></span> of <?php print $num_frames; ?></div>
 
 	<div id = "back-button" class = "button" onclick = "loadFrame(currentFrame - 1);"><img src = "img/back.svg"></div>
 	<div id = "forward-button" class = "button" onclick = "loadFrame(currentFrame + 1);"><img src = "img/forward.svg"></div>
@@ -73,8 +79,7 @@ $metadata = file_get_contents("data/2014-12-20/metadata");
 metadata = "";
 <?php
 
-$metadata = explode("\n", $metadata);
-for ($i = 1; $i <= 20; $i++) {
+for ($i = 1; $i <= $num_frames; $i++) {
 	print "metadata += \"{$metadata[$i]},\";\n";
 }
 
@@ -84,11 +89,11 @@ metadata = metadata.split(",");
 currentFrame = 0;
 
 function loadFrame(id) {
-	if (id > 0 && id < 21) {
+	if (id > 0 && id <= <?php print $num_frames; ?>) {
 		currentFrame = id;
-		$("#tpx0 img").attr("src", "data/2014-12-20/frame" + id + "/c0.png");
-		$("#tpx1 img").attr("src", "data/2014-12-20/frame" + id + "/c1.png");
-		$("#tpx3 img").attr("src", "data/2014-12-20/frame" + id + "/c3.png");
+		$("#tpx0 img").attr("src", "data/<?php print $id; ?>/frame" + id + "/c0.png");
+		$("#tpx1 img").attr("src", "data/<?php print $id; ?>/frame" + id + "/c1.png");
+		$("#tpx3 img").attr("src", "data/<?php print $id; ?>/frame" + id + "/c3.png");
 
 		var meta = metadata[id - 1];
 		var metafields = meta.split(" ");
