@@ -1,3 +1,20 @@
+<?php
+
+$id = $_GET['id'];
+if (!isset($id)) {
+	$id = "2014-12-20";
+}
+
+$files = preg_grep('/^([^.])/',scandir("data"));
+
+if (!in_array($id, $files)) {
+	die(file_get_contents("404.html"));
+}
+
+$metadata = file_get_contents("data/2014-12-20/metadata");
+
+
+?>
 <!DOCTYPE html>
 
 <title>LUCID Data Browser</title>
@@ -43,7 +60,11 @@
 	<div id = "menu-title">Select a LUCID file</div>
 	<img src = "img/close.svg" id = "menu-close" onclick = "$('#mask, #menu').fadeOut();">
 	<ul>
-		<li onclick = "loadFile('2014-12-20');">2014-12-20</li>
+		<?php 
+		foreach ($files as $file) {
+			print "<li onclick = \"loadFile('{$file}');\">{$file}</li>";
+		}
+		?>
 	</ul>
 </div>
 
@@ -52,7 +73,6 @@
 metadata = "";
 <?php
 
-$metadata = file_get_contents("data/2014-12-20/metadata");
 $metadata = explode("\n", $metadata);
 for ($i = 1; $i <= 20; $i++) {
 	print "metadata += \"{$metadata[$i]},\";\n";
@@ -110,7 +130,7 @@ function showMenu() {
 }
 
 function loadFile(file) {
-	window.location = "index.php";
+	window.location = "./?id=" + file;
 }
 
 </script>
