@@ -1,3 +1,11 @@
+<?php
+
+include("evil.php");
+
+if ($_GET['embed'] == "true") {
+  $noSidebar = true;
+}
+?>
 <!DOCTYPE html>
 <!-- API key AIzaSyDJlcv7E3JJl6ejN109-wFHm5E26HkCH_k -->
 <html>
@@ -13,9 +21,15 @@
       #map-canvas { 
         position: fixed;
         top: 0px;
-        left: 380px;
         height: 100%;
-        width: calc(100% - 380px);
+        <?php 
+          if ($noSidebar) {
+            print "left: 0px; width: 100%;";
+          }
+          else {
+            print "left: 380px; width: calc(100% - 380px);";
+          }
+        ?>        
       }
       #title-container {
         position: fixed;
@@ -44,6 +58,11 @@
         background-color: #ffffff;
         box-shadow: 3px 0px 5px 0 rgba(0,0,0,.5);
         z-index: 300;
+        <?php 
+          if ($noSidebar) {
+            print "display: none;";
+          } 
+        ?>
       }
       #details {
         position: absolute;
@@ -80,11 +99,13 @@
     <script type="text/javascript">
       var lucidMarker;
       var map;
+      var orbitLine;
+      var lineDrawn = false;
 
       function initialize() {
         var mapOptions = {
           center: { lat: 0, lng: 0},
-          zoom: 2,
+          zoom: 3,
           disableDefaultUI: true
         };
         map = new google.maps.Map(document.getElementById('map-canvas'),
@@ -130,19 +151,53 @@
   <script>
   function grabData() {
     console.log("Grabbing coordinates")
-    $.get("tracking/coordinates.php", function(data) {
+    $.get("tracking/coordinates.php?mode=now", function(data) {
       data = data.split(",")
       data[0] = Math.round(data[0] * 100) / 100
       data[1] = Math.round(data[1] * 100) / 100
       setPosition(data[0], data[1])
       $("#lat").text(data[0]);
       $("#lng").text(data[1]);
-      setTimeout('grabData()', 3000); // schedule for 3 secs...
+      setTimeout('grabData()', 1000); // schedule for 1 sec...
     })
+  }
+  function grabLine() {
+    console.log("Grabbing orbital line")
+    $.get("tracking/coordinates.php?mode=line", function(data) {
+      
+      if (lineDrawn) {
+        orbitLine.setMap(null);
+      }
+
+      points = data.split(";")
+
+      var orbitLinepoints = []
+
+      $(points).each(function(index, point) {
+        point = point.split(",")
+        point[0] = Math.round(point[0] * 100) / 100
+        point[1] = Math.round(point[1] * 100) / 100 //rounding...
+        orbitLinepoints.push(new google.maps.LatLng(point[0], point[1]))
+      })
+
+      orbitLine = new google.maps.Polyline({
+        path: orbitLinepoints,
+        geodesic: true,
+        strokeColor: '#FF0000',
+        strokeOpacity: 1.0,
+        strokeWeight: 2
+      })
+
+      orbitLine.setMap(map)
+      lineDrawn = true
+      setTimeout('grabLine()', 10000) // schedule for 10 secs...
+    })
+  
   }
   $(document).ready(function() {
     initialize();
     grabData();
+    grabLine();
   })
   </script>
 </html>

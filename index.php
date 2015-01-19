@@ -3,6 +3,8 @@
 //error_reporting(E_ALL);
 //ini_set('display_errors', 1);
 
+include("evil.php");
+
 $id = $_GET['id'];
 if (!isset($id)) {
 	$id = "2014-12-20"; //default file
