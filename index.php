@@ -5,9 +5,16 @@
 
 include("evil.php");
 
+$DEFAULT_FILE = "T1_LU_0697744309_20141220_204959";
+
 $id = $_GET['id'];
 if (!isset($id)) {
-	$id = "2014-12-20"; //default file
+	$id = $DEFAULT_FILE; //default file
+}
+
+$frame = $_GET['frame'];
+if (!isset($frame)) {
+	$frame = '1'; //start at first frame
 }
 
 $files = preg_grep('/^([^.])/',scandir("data"));
@@ -49,9 +56,9 @@ $num_frames = $num_frames[0];
 		</div>
 	</div>
 	<div id = "data">
-		<div class = "frame" id = "tpx0"><img/></div>
-		<div class = "frame" id = "tpx1"><img/></div>
-		<div class = "frame" id = "tpx3"><img/></div>
+		<div class = "frame" id = "tpx0"><img/><div class = "clusters"></div></div>
+		<div class = "frame" id = "tpx1"><img/><div class = "clusters"></div></div>
+		<div class = "frame" id = "tpx3"><img/><div class = "clusters"></div></div>
 		<div class = "label">TPX0</div>
 		<div class = "label">TPX1</div>
 		<div class = "label">TPX3</div>
@@ -111,10 +118,56 @@ function loadFrame(id) {
 		$("#lng").text(lng);
 
 		$("#current-frame").text(id);
+
+		//Clear cluster circles
+		$(".clusters").empty();
+
+		// Get cluster files for each frame
+		$.get("data/<?php print $id; ?>/frame" + id + "/c0.clusters", function(clusters_0) {
+		$.get("data/<?php print $id; ?>/frame" + id + "/c1.clusters", function(clusters_1) {
+		$.get("data/<?php print $id; ?>/frame" + id + "/c3.clusters", function(clusters_3) {
+			var clusters = [clusters_0, clusters_1, clusters_3];
+			var chip = [0, 1, 3];
+			$(clusters).each(function(index, clusterfile) {
+				clusterfile = clusterfile.split("\n");
+				clusterfile.pop(); //Last element will be blank
+				$(clusterfile).each(function(index2, cluster) {
+					//find individual parameters
+					cluster = cluster.split(" ");
+					$("#tpx" + chip[index] + " .clusters").append(" <div class = 'clustercircle' data-centroid-x='" + cluster[1] + "' data-centroid-y='" + cluster[0] + "' data-radius='" + cluster[2] + "'> ");
+				})
+			});	
+			clusterCircles();
+
+		}); }); });
+
+		//Push frame id to history API
+		window.history.replaceState( {} , 'foo', '?id=<?php print $id; ?>&frame=' + id);
 	}
 }
 
-loadFrame(1);
+function clusterCircles() {
+	$(".clustercircle").each(function(index, value) {
+		var centroid_x = $(this).attr("data-centroid-x");
+		var centroid_y = $(this).attr("data-centroid-y");
+		var radius = $(this).attr("data-radius");
+		$(this).css({
+			"width": radius * 2 + "px",
+			"height": radius * 2 + "px",
+			"top": centroid_x + "px",
+			"left": centroid_y + "px",
+			"margin-top": radius * -1 + "px",	
+			"margin-left": radius * -1 + "px"
+		});
+		$(this).click(function() {
+    		//window.location = "viewcluster.php?id=<?php print $id; ?>&radius=" + radius + "&centroid_x=" + centroid_x + "&centroid_y=" + centroid_y; 
+    	})
+	});
+}
+
+clusterCircles();
+
+loadFrame(<?php print $frame; ?>);
 
 $(document).keydown(function(e) {
     switch(e.which) {
