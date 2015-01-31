@@ -70,7 +70,7 @@ $num_frames = $num_frames[0];
 
 </div>
 
-<div id = "mask" onclick = "$('#mask, #menu').fadeOut();"></div>
+<div id = "mask" onclick = "$('#mask, #menu, #cluster-viewer').fadeOut();"></div>
 <div id = "menu">
 	<div id = "menu-title">Select a LUCID file</div>
 	<img src = "img/close.svg" id = "menu-close" onclick = "$('#mask, #menu').fadeOut();">
@@ -81,6 +81,10 @@ $num_frames = $num_frames[0];
 		}
 		?>
 	</ul>
+</div>
+
+<div id = "cluster-viewer">
+	<img id = "cluster-img">
 </div>
 
 <script>
@@ -134,7 +138,7 @@ function loadFrame(id) {
 				$(clusterfile).each(function(index2, cluster) {
 					//find individual parameters
 					cluster = cluster.split(" ");
-					$("#tpx" + chip[index] + " .clusters").append(" <div class = 'clustercircle' data-centroid-x='" + cluster[1] + "' data-centroid-y='" + cluster[0] + "' data-radius='" + cluster[2] + "'> ");
+					$("#tpx" + chip[index] + " .clusters").append(" <div class = 'clustercircle' data-centroid-x='" + cluster[1] + "' data-centroid-y='" + cluster[0] + "' data-radius='" + cluster[2] + "' data-cluster-id = '" + (index2 + 1) + "' data-channel = '" + chip[index] + "'> ");
 				})
 			});	
 			clusterCircles();
@@ -151,6 +155,8 @@ function clusterCircles() {
 		var centroid_x = $(this).attr("data-centroid-x");
 		var centroid_y = $(this).attr("data-centroid-y");
 		var radius = $(this).attr("data-radius");
+		var clusterId = $(this).attr("data-cluster-id");
+		var channel = $(this).attr("data-channel");
 		$(this).css({
 			"width": radius * 2 + "px",
 			"height": radius * 2 + "px",
@@ -160,9 +166,16 @@ function clusterCircles() {
 			"margin-left": radius * -1 + "px"
 		});
 		$(this).click(function() {
-    		//window.location = "viewcluster.php?id=<?php print $id; ?>&radius=" + radius + "&centroid_x=" + centroid_x + "&centroid_y=" + centroid_y; 
+    		viewCluster("viewcluster.php?datafile=<?php print $id; ?>&channel=" + channel + "&frame=" + currentFrame + "&centroid-x=" + centroid_x + "&centroid-y=" + centroid_y + "&radius=" + radius);
     	})
 	});
+}
+
+function viewCluster(url) {
+	$("#cluster-img").attr("src", ""); //hide last image so it is not displayed over a slow connection
+	$("#cluster-img").attr("src", url);
+	$("#mask").fadeIn();
+	$("#cluster-viewer").fadeIn();
 }
 
 clusterCircles();

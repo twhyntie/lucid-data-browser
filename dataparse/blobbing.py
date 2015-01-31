@@ -27,17 +27,6 @@ class BlobFinder:
 				self.blob.append((pixel[0], pixel[1]))
 				self.add(pixel[0], pixel[1])
 
-	def relativise_blob(self, active_blob):
-		new_blob = []
-		min_x, min_y = 256, 256
-		for pixel in active_blob:
-			if pixel[0] < min_x:
-				min_x = pixel[0]
-			if pixel[1] < min_y:
-				min_y = pixel[1]
-		for pixel in active_blob:
-			new_blob.append(((pixel[0] - min_x) + 1, (pixel[1] - min_y) + 1))
-		return new_blob
 
 	def find_blobs(self):
 		blobs = []
@@ -58,13 +47,11 @@ class BlobFinder:
 
 		return blobs
 
-	def relativise_blobs(self, blobs):
-		relative_blobs = []
-
-		for blob in blobs:
-			relative_blobs.append(self.relativise_blob(blob))
-
-		return relative_blobs
+	def write_blob_file(self, filename):
+		file_obj = open(filename, 'w')
+		for blob in self.find_blobs():
+			file_obj.write(str(blob.pixel_list) + "\n")
+		file_obj.close()
 
 	def __init__(self, frame, search_radius):
 
@@ -93,3 +80,15 @@ class Blob:
 				self.radius = distance
 		self.radius += 0.5 # Stop 1 particle tracks having a radius of 0
 		self.radius = math.ceil(self.radius)
+
+	def relativise(self):
+		new_blob = []
+		min_x, min_y = 256, 256
+		for pixel in self.pixel_list:
+			if pixel[0] < min_x:
+				min_x = pixel[0]
+			if pixel[1] < min_y:
+				min_y = pixel[1]
+		for pixel in self.pixel_list:
+			new_blob.append(((pixel[0] - min_x) + 1, (pixel[1] - min_y) + 1))
+		self.pixel_list = new_blob
