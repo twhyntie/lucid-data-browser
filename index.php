@@ -35,6 +35,7 @@ $num_frames = $num_frames[0];
 <title>LUCID Data Browser</title>
 
 <script src="//use.edgefonts.net/open-sans:n3,n4,i4.js"></script>
+<script src="js/moment.js"></script>
 <link rel = "stylesheet" href = "css/main.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 <script src = "js/main.js"></script>
@@ -79,8 +80,10 @@ $num_frames = $num_frames[0];
 	<ul>
 		<?php 
 		foreach ($files as $file) {
+			if ($file == $id) print "<b>";
 			$cfile = str_replace(".", ":", $file);
 			print "<li onclick = \"loadFile('{$file}');\">{$cfile}</li>";
+			if ($file == $id) print "</b>";
 		}
 		?>
 	</ul>
@@ -115,7 +118,7 @@ function loadFrame(id) {
 
 		var meta = metadata[id - 1];
 		var metafields = meta.split(" ");
-		var timestamp = metafields[1];
+		var timestamp = moment(metafields[1], "X").format("DD/MM/YYYY HH:mm.ss");
 		var lat = Math.round(metafields[2] * 100) / 100; // hack for 2dp
 		var lng = Math.round(metafields[3] * 100) / 100;
 

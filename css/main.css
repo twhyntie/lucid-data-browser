@@ -251,11 +251,15 @@
 	left: 0px;
 	padding: 0;
 	margin: 0;
+	width: 600px;
+	height: 200px;
+	overflow-y: scroll;
+	overflow-x: none;
 }
 
 #menu ul li {
 	list-style: none;
-	width: 580px;
+	width: 560px;
 	height: 30px;
 	padding: 10px;
 	color: #333333;
