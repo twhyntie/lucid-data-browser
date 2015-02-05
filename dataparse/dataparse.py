@@ -6,6 +6,10 @@ import Image
 import sys, os
 import blobbing
 
+sys.path.append("./particle-recognition")
+
+import impact
+
 files = os.listdir("../ldat/incoming")
 for filename in files:
 	print "Processing: " + filename
@@ -35,7 +39,6 @@ for filename in files:
 			for blob in blobs:
 				blobfile.write(str(int(blob.centroid[0])) + " " + str(int(blob.centroid[1])) + " " + str(int(blob.radius)) + "\n")
 			blobfile.close()
-			blobfile.write_blob_file(framefolder + "c" + str(channel) + ".blobfile")
 
 		pos = tel.get_position("TDS1.tle", data.timestamp)
 		meta += str(i + 1) + " " + str(data.timestamp) + " " + str(pos.latitude) + " " + str(pos.longitude) + "\n"

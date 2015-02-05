@@ -5,7 +5,7 @@
 
 include("evil.php");
 
-$DEFAULT_FILE = "T1_LU_0697744309_20141220_204959";
+$DEFAULT_FILE = "2015-01-30 01.14";
 
 $id = $_GET['id'];
 if (!isset($id)) {
@@ -67,7 +67,9 @@ $num_frames = $num_frames[0];
 
 	<div id = "back-button" class = "button" onclick = "loadFrame(currentFrame - 1);"><img src = "img/back.svg"></div>
 	<div id = "forward-button" class = "button" onclick = "loadFrame(currentFrame + 1);"><img src = "img/forward.svg"></div>
-
+	<div id = "clustering-checkbox" onclick = "enableClustering();">
+		Enable Clustering (Experimental)
+	</div>
 </div>
 
 <div id = "mask" onclick = "$('#mask, #menu, #cluster-viewer').fadeOut();"></div>
@@ -77,7 +79,8 @@ $num_frames = $num_frames[0];
 	<ul>
 		<?php 
 		foreach ($files as $file) {
-			print "<li onclick = \"loadFile('{$file}');\">{$file}</li>";
+			$cfile = str_replace(".", ":", $file);
+			print "<li onclick = \"loadFile('{$file}');\">{$cfile}</li>";
 		}
 		?>
 	</ul>
@@ -88,6 +91,8 @@ $num_frames = $num_frames[0];
 </div>
 
 <script>
+
+clustering = false;
 
 metadata = "";
 <?php
@@ -151,24 +156,26 @@ function loadFrame(id) {
 }
 
 function clusterCircles() {
-	$(".clustercircle").each(function(index, value) {
-		var centroid_x = $(this).attr("data-centroid-x");
-		var centroid_y = $(this).attr("data-centroid-y");
-		var radius = $(this).attr("data-radius");
-		var clusterId = $(this).attr("data-cluster-id");
-		var channel = $(this).attr("data-channel");
-		$(this).css({
-			"width": radius * 2 + "px",
-			"height": radius * 2 + "px",
-			"top": centroid_x + "px",
-			"left": centroid_y + "px",
-			"margin-top": radius * -1 + "px",	
-			"margin-left": radius * -1 + "px"
+	if (clustering) {
+		$(".clustercircle").each(function(index, value) {
+			var centroid_x = $(this).attr("data-centroid-x");
+			var centroid_y = $(this).attr("data-centroid-y");
+			var radius = $(this).attr("data-radius");
+			var clusterId = $(this).attr("data-cluster-id");
+			var channel = $(this).attr("data-channel");
+			$(this).css({
+				"width": radius * 2 + "px",
+				"height": radius * 2 + "px",
+				"top": centroid_x + "px",
+				"left": centroid_y + "px",
+				"margin-top": radius * -1 + "px",	
+				"margin-left": radius * -1 + "px"
+			});
+			$(this).click(function() {
+	    		viewCluster("viewcluster.php?datafile=<?php print $id; ?>&channel=" + channel + "&frame=" + currentFrame + "&centroid-x=" + centroid_x + "&centroid-y=" + centroid_y + "&radius=" + radius);
+	    	})
 		});
-		$(this).click(function() {
-    		viewCluster("viewcluster.php?datafile=<?php print $id; ?>&channel=" + channel + "&frame=" + currentFrame + "&centroid-x=" + centroid_x + "&centroid-y=" + centroid_y + "&radius=" + radius);
-    	})
-	});
+	}
 }
 
 function viewCluster(url) {
@@ -176,6 +183,13 @@ function viewCluster(url) {
 	$("#cluster-img").attr("src", url);
 	$("#mask").fadeIn();
 	$("#cluster-viewer").fadeIn();
+}
+
+function enableClustering() {
+	clustering = true;
+	$(".clusters").show();
+	$("#clustering-checkbox").fadeOut("fast");
+	clusterCircles();
 }
 
 clusterCircles();

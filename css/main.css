@@ -135,6 +135,7 @@
 	width: 256px;
 	height: 256px;
 	opacity: 0;
+	display: none;
 }
 
 .clusters:hover {
@@ -269,6 +270,19 @@
 	background-color: #eeeeee;
 }
 
+#clustering-checkbox {
+	position: fixed;
+	top: 20px;
+	right: 20px;
+	color: #cccccc;
+	font-family: open-sans;
+	cursor: pointer;
+}
+
+#clustering-checkbox:hover {
+	color: white;
+}
+
 /* Cluster viewer popup */
 
 #cluster-viewer {
@@ -276,9 +290,9 @@
 	top: 50%;
 	left : 50%;
 	margin-top: -256px;
-	margin-left: -406px;
+	margin-left: -256px;
 	background-color: white;
-	width: 812px;
+	width: 512px;
 	height: 512px;
 	z-index: 500;
 	display: none;
