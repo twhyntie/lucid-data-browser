@@ -6,15 +6,20 @@ import Image
 import sys, os
 import blobbing
 
-sys.path.append("./particle-recognition")
+default_folder = False
+incoming_folder = "../ldat/incoming/"
 
-import impact
+if len(sys.argv) == 1:
+	files = os.listdir("../ldat/incoming")
+	default_folder = True
+else:
+	files = os.listdir(sys.argv[1])
+	incoming_folder = sys.argv[1] + "/"
 
-files = os.listdir("../ldat/incoming")
 for filename in files:
 	print "Processing: " + filename
 
-	datafile = LucidFile("../ldat/incoming/" + filename, 3)
+	datafile = LucidFile(incoming_folder + filename, 3)
 	rootfolder = "../data/" + filename[:-5] + "/" # Always remember ending slash!!
 	num_frames = datafile.num_frames - 1
 
@@ -50,4 +55,5 @@ for filename in files:
 	f.close()
 	print "done"
 
-os.system("mv ../ldat/incoming/* ../ldat/done") # move all files to 'done' folder
+if default_folder:
+	os.system("mv ../ldat/incoming/* ../ldat/done") # move all files to 'done' folder
