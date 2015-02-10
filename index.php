@@ -29,6 +29,9 @@ $num_frames = $metadata[0];
 $num_frames = explode(" ", $num_frames);
 $num_frames = $num_frames[0];
 
+//Read 'bestfiles' file
+$bestfiles = file_get_contents("data/bestfiles");
+$bestfiles = explode("\n", $bestfiles);
 ?>
 <!DOCTYPE html>
 
@@ -78,12 +81,26 @@ $num_frames = $num_frames[0];
 	<div id = "menu-title">Select a LUCID file</div>
 	<img src = "img/close.svg" id = "menu-close" onclick = "$('#mask, #menu').fadeOut();">
 	<ul>
+		<input id = "files-filter" placeholder = "Filter files">
+		<div id = "best-files">
+			<div id = "best-title">
+				Best Files
+			</div>
+		</div>
 		<?php 
 		foreach ($files as $file) {
-			if ($file == $id) print "<b>";
-			$cfile = str_replace(".", ":", $file);
-			print "<li onclick = \"loadFile('{$file}');\">{$cfile}</li>";
-			if ($file == $id) print "</b>";
+			if ($file != "bestfiles") {
+				$cfile = str_replace(".", ":", $file);
+				$ifbest = "";
+				if (in_array($file, $bestfiles)) {
+					$ifbest = "class = 'best' ";
+				}
+				print "<li {$ifbest}onclick = \"loadFile('{$file}');\">";
+				if ($file == $id) print "<b>";
+				print $cfile;
+				if ($file == $id) print "</b>";
+				print "</li>";
+			}
 		}
 		?>
 	</ul>
@@ -222,5 +239,31 @@ function showMenu() {
 function loadFile(file) {
 	window.location = "./?id=" + file;
 }
+
+$(document).ready(function() {
+	$("#menu ul li").each(function(index, value) {
+		if ($(this).attr("class") == "best") {
+			$(this).appendTo("#best-files")
+		}
+	})
+	var input = document.getElementById('files-filter');
+	input.onkeyup = function () {
+		ival = $(input).val();
+		//alert(ival);
+	    $("#menu ul li").each(function() {
+	    	$(this).hide();
+
+	    	litext = $(this).text()
+	    	if (litext.indexOf(ival) >= 0 ) {
+	    		$(this).show();
+	    	}
+	    	
+	    })
+		$("#best-files").show();
+	    if ($("#best-files li:visible").length == 0) {
+    		$("#best-files").hide();
+    	}
+	}
+})
 
 </script>

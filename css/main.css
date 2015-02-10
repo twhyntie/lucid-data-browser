@@ -216,8 +216,8 @@
 	left: 50%;
 	width: 600px;
 	margin-left: -300px;
-	height: 250px;
-	margin-top: -125px;
+	height: 500px;
+	margin-top: -250px;
 	background-color: white;
 	display: none;
 }
@@ -252,7 +252,7 @@
 	padding: 0;
 	margin: 0;
 	width: 600px;
-	height: 200px;
+	height: 450px;
 	overflow-y: scroll;
 	overflow-x: none;
 }
@@ -272,6 +272,38 @@
 
 #menu ul li:hover {
 	background-color: #eeeeee;
+}
+
+#best-files {
+	font-family: open-sans;
+	background-color: #dddddd;
+	border-bottom: 2px solid #333333;
+}
+
+#best-title {
+	height: 30px;
+	padding-top: 20px;
+	padding-left: 10px;
+	background-color: #dddddd;
+	font-size: 18px;
+	font-weight: 300;
+}
+
+#files-filter {
+	width: 570px;
+	height: 30px;
+	background-color: white;
+	font-style: italic;
+	font-family: open-sans;
+	border: none;
+	font-size: 17px;
+	padding: 5px;
+	border-bottom: 1px solid #333333;
+}
+
+#files-filter:focus {
+	border-bottom: 1px solid #333333;
+	outline: none;
 }
 
 #clustering-checkbox {

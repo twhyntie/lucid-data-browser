@@ -13,6 +13,7 @@ if len(sys.argv) == 1:
 	files = os.listdir("../ldat/incoming")
 	default_folder = True
 else:
+	print "Reading from folder " + sys.argv[1]
 	files = os.listdir(sys.argv[1])
 	incoming_folder = sys.argv[1] + "/"
 
@@ -20,7 +21,14 @@ for filename in files:
 	print "Processing: " + filename
 
 	datafile = LucidFile(incoming_folder + filename, 3)
-	rootfolder = "../data/" + filename[:-5] + "/" # Always remember ending slash!!
+
+	# Extract date and time from filename 
+	fields = filename.split("_")
+	f_date = fields[3]
+	f_time = fields[4]
+	dt = f_date[0:4] + "-" + f_date[4:6] + "-" + f_date[6:8] + " " + f_time[0:2] + "." + f_time[2:4]
+	rootfolder = "/var/www/html/lucid-data-browser/data/" + dt + "/" # Always remember ending slash!!
+
 	num_frames = datafile.num_frames - 1
 
 	meta = str(num_frames) + " none\n"
@@ -38,12 +46,12 @@ for filename in files:
 			image = frameplot.get_image(frame, "RGB")
 			image.save(framefolder + "c" + str(channel) + ".png")
 			# Find blobs in frame
-			blobfinder = blobbing.BlobFinder(frame, 9) # Seems to be the best search radius for non-continuous LUCID data
-			blobfile = open(framefolder + "c" + str(channel) + ".clusters", "w")
-			blobs = blobfinder.find_blobs()
-			for blob in blobs:
-				blobfile.write(str(int(blob.centroid[0])) + " " + str(int(blob.centroid[1])) + " " + str(int(blob.radius)) + "\n")
-			blobfile.close()
+			#blobfinder = blobbing.BlobFinder(frame, 9) # Seems to be the best search radius for non-continuous LUCID data
+			#blobfile = open(framefolder + "c" + str(channel) + ".clusters", "w")
+			#blobs = blobfinder.find_blobs()
+			#for blob in blobs:
+			#	blobfile.write(str(int(blob.centroid[0])) + " " + str(int(blob.centroid[1])) + " " + str(int(blob.radius)) + "\n")
+			#blobfile.close()
 
 		pos = tel.get_position("TDS1.tle", data.timestamp)
 		meta += str(i + 1) + " " + str(data.timestamp) + " " + str(pos.latitude) + " " + str(pos.longitude) + "\n"
