@@ -71,12 +71,12 @@ $bestfiles = explode("\n", $bestfiles);
 
 	<div id = "back-button" class = "button" onclick = "loadFrame(currentFrame - 1);"><img src = "img/back.svg"></div>
 	<div id = "forward-button" class = "button" onclick = "loadFrame(currentFrame + 1);"><img src = "img/forward.svg"></div>
-	<div id = "clustering-checkbox" onclick = "enableClustering();">
+	<!--<div id = "clustering-checkbox" onclick = "enableClustering();">
 		Enable Clustering (Experimental)
-	</div>
+	</div>-->
 </div>
 
-<div id = "mask" onclick = "$('#mask, #menu, #cluster-viewer').fadeOut();"></div>
+<div id = "mask" onclick = "$('#mask, #loading,  #menu, #cluster-viewer, #xyc-popup').fadeOut();"></div>
 <div id = "menu">
 	<div id = "menu-title">Select a LUCID file</div>
 	<img src = "img/close.svg" id = "menu-close" onclick = "$('#mask, #menu').fadeOut();">
@@ -109,6 +109,12 @@ $bestfiles = explode("\n", $bestfiles);
 <div id = "cluster-viewer">
 	<img id = "cluster-img">
 </div>
+
+<div id = "xyc-popup">
+<textarea></textarea>
+</div>
+
+<div id = "loading">Loading</div>
 
 <script>
 
@@ -240,6 +246,16 @@ function loadFile(file) {
 	window.location = "./?id=" + file;
 }
 
+function xycPopup(url) {
+	$("#mask, #loading").fadeIn();
+	var ta = $("#xyc-popup textarea");
+	$.get(url, function(data) {
+		$("#loading").hide()
+		ta.val(data)
+		$("#xyc-popup").fadeIn();	
+	})
+}
+
 $(document).ready(function() {
 	$("#menu ul li").each(function(index, value) {
 		if ($(this).attr("class") == "best") {
@@ -264,6 +280,14 @@ $(document).ready(function() {
     		$("#best-files").hide();
     	}
 	}
-})
+	$(".frame").click(function() {
+		// Open up XYC window
+		chip_id = $(this).attr("id");
+		xyc_url = "./data/<?php print $id; ?>/frame" + currentFrame + "/c" + chip_id.substring(3,4) + ".xyc";
+		//xycPopup(xyc_url);
+		window.location = xyc_url;
+	})
+
+});
 
 </script>

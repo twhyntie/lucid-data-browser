@@ -19,7 +19,7 @@ def dms_to_dd(dms):
 
 def get_position(tle_file, time = None):
 	# Open TLE file and pass it to pyEphem
-	tle_file = open(os.path.dirname(os.path.realpath(__file__)) + "/" + tle_file, 'r').read()
+	tle_file = open(tle_file, 'r').read()
 	tle_lines = tle_file.split("\n")
 	tle_rec = ephem.readtle(tle_lines[0], tle_lines[1], tle_lines[2])
 	if time == None:

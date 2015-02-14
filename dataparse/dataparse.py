@@ -27,7 +27,7 @@ for filename in files:
 	f_date = fields[3]
 	f_time = fields[4]
 	dt = f_date[0:4] + "-" + f_date[4:6] + "-" + f_date[6:8] + " " + f_time[0:2] + "." + f_time[2:4]
-	rootfolder = "/var/www/html/lucid-data-browser/data/" + dt + "/" # Always remember ending slash!!
+	rootfolder = "/var/www/lucid-data-browser/data/" + dt + "/" # Always remember ending slash!!
 
 	num_frames = datafile.num_frames - 1
 
@@ -45,6 +45,14 @@ for filename in files:
 			frame = data.channels[channel]
 			image = frameplot.get_image(frame, "RGB")
 			image.save(framefolder + "c" + str(channel) + ".png")
+			xycfile = open(framefolder + "c" + str(channel) + ".xyc", "w")
+			for x in range(256):
+				for y in range(256):
+					c_val = frame[x][y]
+					c_val = c_val / 256.0
+					c_val *= 11810
+					xycfile.write(str(x) + "\t" + str(y) + "\t" + str(c_val) + "\n")				
+			xycfile.close()
 			# Find blobs in frame
 			#blobfinder = blobbing.BlobFinder(frame, 9) # Seems to be the best search radius for non-continuous LUCID data
 			#blobfile = open(framefolder + "c" + str(channel) + ".clusters", "w")

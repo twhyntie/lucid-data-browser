@@ -341,3 +341,41 @@
 	width: 512px;
 	height: 512px;
 }
+
+#xyc-popup {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	width: 800px;
+	height: 400px;
+	margin-left: -400px;
+	margin-top: -200px;
+	background-color: white;
+	display: none;
+}
+
+#xyc-popup textarea {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 800px;
+	height: 400px;
+	resize: none;
+	border: none;
+}
+
+#loading {
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+	text-align: center;
+	color: #ffffff;
+	font-family: open-sans;
+	font-size: 25px;
+	display: none;
+	font-weight: 300;
+	z-index: 500;
+	padding-top: 100px;
+}
